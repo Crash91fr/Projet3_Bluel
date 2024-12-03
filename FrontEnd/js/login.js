@@ -1,7 +1,12 @@
 // code Javascript pour le Login
 
+// sophie.bluel@test.tld
+// S0phie 
+
 const loginForm = document.querySelector(".login-form")
 const error_message = document.getElementById("error_message")
+
+// **** LOGIN FORM HANDLING *****
 
 loginForm.addEventListener("submit", (event) => {
     
@@ -37,23 +42,23 @@ loginForm.addEventListener("submit", (event) => {
         },
         body: JSON.stringify({ email: email, password: password }),
     })
-        .then((LoginResponse) => {
-            console.log("Login Response: ", LoginResponse)
-            if (LoginResponse.status === 200) {
-                return LoginResponse.json()
-            } else if (LoginResponse.status === 401) {
+        .then((response) => {
+            console.log("Login Response: ", response)
+            if (response.status === 200) {
+                return response.json()
+            } else if (response.status === 401) {
                 error_message.innerText = "E-mail et/ou mot de passe incorrect";
-            } else if (LoginResponse.status === 404) {
+            } else if (response.status === 404) {
                 error_message.innerText = "Utilisateur inconnu, merci de vérifier vos identifiants."
             } else {
-                error_message.innerText = `Erreur: ${LoginResponse.status}`
+                error_message.innerText = `Erreur: ${response.status}`
             }
         })
-        .then((tokenID) => { //trouver comment sauver le token id
-            if (tokenID) {
-                console.log("tokenID: ", tokenID)
-                 window.localStorage.setItem("tokenID", JSON.stringify(tokenID))
-                 window.location.replace("../index.html")
+        .then((user) => {
+            if (user) {
+                console.log(user)
+                sessionStorage.setItem("token", user.token)
+                window.location.replace("../index.html")
             }
         })
         .catch((error) => console.error(error))
@@ -69,13 +74,11 @@ function getLoginErrors(emailInput, passwordInput) {
         emailInput.classList.add("incorrect")
         errors.push("E-mail requis")
     }
-
     if (passwordInput.value.trim() === "") {
         passwordInput.placeholder = "Mot de passe requis"
         passwordInput.classList.add("incorrect")
         errors.push("Mot de passe requis")
     }
-
     return errors
 }
 

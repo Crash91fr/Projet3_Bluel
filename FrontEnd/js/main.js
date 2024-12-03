@@ -1,5 +1,39 @@
 // code JavaScript pour la structure
 
+// ***CHECK IF USER IS LOGGED IN AND ADD LOGOUT FUNCTION
+
+function userLogged() {
+    const logButton = document.getElementById("log-button")
+    const token = sessionStorage.getItem("token")
+    if (token) {
+        console.log("Token is saved:", token)
+        logButton.textContent = "logout"
+
+        logButton.replaceWith(logButton.cloneNode(true))
+        
+        const newLogButton = document.getElementById("log-button")
+            
+        newLogButton.addEventListener("click", () => {
+            sessionStorage.removeItem("token")
+            window.location.replace("./index.html") // Reload the page, with user logged out
+        })
+    } else {
+        console.log("No token found in sessionStorage")
+
+        logButton.replaceWith(logButton.cloneNode(true))
+        
+        const newLogButton = document.getElementById("log-button")
+        
+        newLogButton.addEventListener("click", () => {
+            window.location.replace("./login.html")  // Redirect to login page
+        })
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    userLogged();  
+})
+
 // ****** GET / requests *************
 async function getCategories() {
     try {
@@ -61,11 +95,9 @@ async function getCategories() {
   }
   
   function handleActiveButton(button) {
-    // Remove 'active' class from all filter buttons
     const allButtons = document.querySelectorAll(".filtres button");
     allButtons.forEach(btn => btn.classList.remove("active"));
-  
-    // Add 'active' class to the clicked button
+   
     button.classList.add("active");
   }
   
@@ -121,4 +153,5 @@ async function getCategories() {
   
   // Fetch categories and generate filter menu on page load
   getCategories().then(categories => filterMenu(categories)).catch(error => console.error(error))
+
   
