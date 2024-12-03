@@ -48,16 +48,22 @@ table {
 }
 /** end reset css**/
 body {
-	max-width: 1140px;
-	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
+	background-color: #FFFEF8;
 }
 header {
+	max-width: 1140px;
+	margin:50px auto;
 	display: flex;
 	justify-content: space-between;
-	margin: 50px 0
 }
+
+main {
+	max-width: 1140px;
+	margin:auto;
+}
+
 section {
 	margin: 50px 0
 }
@@ -90,14 +96,21 @@ nav ul {
 	list-style-type: none;
 
 }
+
+nav li a {
+	text-decoration: none;
+	color: black;
+}
+
 nav li {
 	padding: 0 10px;
 	font-size: 1.2em;
 }
 
-li:hover {
+nav li a:hover {
 	color: #B1663C;
 }
+
 #introduction {
 	display: flex;
 	align-items: center;
@@ -125,7 +138,42 @@ li:hover {
 	text-align: center;
 	margin-bottom: 1em;
 }
-.gallery {
+
+.filtres {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin: 50px 0px;
+}
+
+.filtres button {
+	font-family: 'Syne';
+	font-weight: 700;
+	font-size: 1.2em;
+	color: #1D6154;
+	background-color: #FFFEF8;
+	border: solid 1px #1D6154;
+	height: 50px;
+	text-align: center;
+	border-radius: 60px ;
+}
+
+button {
+	padding: 0px 15px;
+	min-width: 100px;
+}
+
+.btn-tous.active {
+	background-color: #1D6154; 
+	color: #FFFEF8;              
+  }
+  
+.filtres button.active {
+	background-color: #1D6154; 
+	color: #FFFEF8;      
+  }
+
+.gallery { 
 	width: 100%;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -133,37 +181,58 @@ li:hover {
 	grid-row-gap: 20px;
 }
 
-.gallery img {
+.gallery img { 
 	width: 100%;
 
 }
-#contact {
+
+/****Contact, Login****/
+
+#contact,
+#login {
 	width: 50%;
 margin: auto;
 }
 #contact > * {
 	text-align: center;
-
 }
-#contact h2{
+#login > * {
+	text-align: center;
+}
+#contact h2,
+#login h2 {
 	margin-bottom: 20px;
 }
-#contact form {
+
+#login h2{
+	margin-top: 120px;
+}
+
+#contact form, 
+#login form {
 	text-align: left;
 	margin-top:30px;
 	display: flex;
 	flex-direction: column;
 }
-
-#contact input {
+#contact input,
+#login input {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
-#contact label {
+
+#contact label,
+#login label {
 	margin: 2em 0 1em 0;
 }
+#login a {
+	color:black;
+	text-align: center;
+	margin-bottom: 250px;
+}
+
 #contact textarea {
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
@@ -180,9 +249,27 @@ input[type="submit"]{
 	border-radius: 60px ;
 }
 
-footer nav ul {
-	display: flex;
-	justify-content: flex-end;
-	margin: 2em
+/**MESSAGE D'ERREUR DANS LOGIN**/
+
+#error_message {
+    color: #B1663C;
+    font-weight: 700;
+    display: block;
+    margin-top: 10px;
+	margin-bottom: 20px;
 }
 
+footer {
+	display: flex;
+	background-color: white;
+	justify-content: flex-end;
+}
+
+footer nav ul {
+	margin: 2em;
+}
+
+footer nav li {
+	font-size: 0.875em;
+	font-weight: 300;
+}
