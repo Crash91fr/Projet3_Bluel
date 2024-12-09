@@ -54,7 +54,7 @@ loginForm.addEventListener("submit", (event) => {
                 error_message.innerText = `Erreur: ${response.status}`
             }
         })
-        .then((user) => {
+        .then((user) => { // si 200, sauvegarde le token et renvoi sur la page d'acceuil en mode logged in 
             if (user) {
                 console.log(user)
                 sessionStorage.setItem("token", user.token)

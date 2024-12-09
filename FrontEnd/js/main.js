@@ -5,27 +5,28 @@
 function userLogged() {
     const logButton = document.getElementById("log-button")
     const token = sessionStorage.getItem("token")
+
+    const blackBar = document.querySelector(".black-bar")
+    const filterMenu = document.querySelector(".filtres")
+    const editIcon = document.querySelector(".edit-icon")
+
     if (token) {
         console.log("Token is saved:", token)
         logButton.textContent = "logout"
-
-        logButton.replaceWith(logButton.cloneNode(true))
         
-        const newLogButton = document.getElementById("log-button")
-            
-        newLogButton.addEventListener("click", () => {
+        blackBar.classList.remove("not-displayed")
+        filterMenu.classList.add("not-displayed")
+        editIcon.classList.remove("not-displayed")
+
+        logButton.addEventListener("click", () => {
             sessionStorage.removeItem("token")
-            window.location.replace("./index.html") // Reload the page, with user logged out
+            window.location.replace("./index.html") // Recharge la page, avec le user logged out
         })
     } else {
         console.log("No token found in sessionStorage")
 
-        logButton.replaceWith(logButton.cloneNode(true))
-        
-        const newLogButton = document.getElementById("log-button")
-        
-        newLogButton.addEventListener("click", () => {
-            window.location.replace("./login.html")  // Redirect to login page
+        logButton.addEventListener("click", () => {
+            window.location.replace("./login.html")  // Redirige vers la login page
         })
     }
 }
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 // ****** GET / requests *************
+
 async function getCategories() {
     try {
       const response = await fetch("http://localhost:5678/api/categories")
@@ -61,8 +63,10 @@ async function getCategories() {
     }
   }
   
-  // *** FILTER MENU ***
-  
+  // *** FILTER MENU *** 
+
+  // création des boutons 
+
   function filterMenu(categories) { 
     const filterMenu = document.querySelector(".filtres")
     
@@ -81,7 +85,7 @@ async function getCategories() {
     categories.forEach(category => {
       if (category) {
         const button = document.createElement("button")
-        button.dataset.categoryId = category.id
+        button.dataset.categoryId = category.id // attache la donnée categoryId à l'élément
         button.textContent = category.name
   
         button.addEventListener("click", () => {
@@ -94,6 +98,8 @@ async function getCategories() {
     })
   }
   
+  // gestion de l'apparence du bouton actif
+
   function handleActiveButton(button) {
     const allButtons = document.querySelectorAll(".filtres button");
     allButtons.forEach(btn => btn.classList.remove("active"));
@@ -146,12 +152,12 @@ async function getCategories() {
     })
   }
   
-  // *** INITIALIZATION ***
+  // *** APPEL DES FONCTIONS AU CHARGEMENT DE LA PAGE ***
   
-  // Fetch works and display them on page load
+  // Fetch works et afficher les travaux
   getWorks().then(works => displayWorks(works)).catch(error => console.error(error))
   
-  // Fetch categories and generate filter menu on page load
+  // Fetch categories et générer les filtres
   getCategories().then(categories => filterMenu(categories)).catch(error => console.error(error))
 
   
