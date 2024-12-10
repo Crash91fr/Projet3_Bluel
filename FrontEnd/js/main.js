@@ -229,7 +229,7 @@ function displayModalGallery() {
         binButton.classList.add("bin-button")
 
         const binIcon = document.createElement("i")
-        binIcon.classList.add("fa-solid", "fa-trash-can")
+        binIcon.classList.add("fa-solid", "fa-trash-can", "fa-xs")
 
         binButton.appendChild(binIcon)
         modalFigure.appendChild(binButton)
