@@ -9,6 +9,7 @@ function userLogged() {
     const blackBar = document.querySelector(".black-bar")
     const filterMenu = document.querySelector(".filtres")
     const editIcon = document.querySelector(".edit-icon")
+   
 
     if (token) {
         console.log("Token is saved:", token)
@@ -17,18 +18,24 @@ function userLogged() {
         blackBar.classList.remove("not-displayed")
         filterMenu.classList.add("not-displayed")
         editIcon.classList.remove("not-displayed")
+       
 
-        logButton.addEventListener("click", () => {
-            sessionStorage.removeItem("token")
-            window.location.replace("./index.html") // Recharge la page, avec le user logged out
-        })
     } else {
         console.log("No token found in sessionStorage")
 
-        logButton.addEventListener("click", () => {
-            window.location.replace("./login.html")  // Redirige vers la login page
-        })
+        blackBar.classList.add("not-displayed")
+        filterMenu.classList.remove("not-displayed")
+        editIcon.classList.add("not-displayed")
+        
     }
+    logButton.addEventListener("click", () => {
+      if (token) {
+      sessionStorage.removeItem("token")
+      window.location.replace("./index.html") // Recharge la page, avec le user logged out
+      } else {
+            window.location.replace("./login.html")  // Redirige vers la login page
+        }
+    })
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -152,6 +159,92 @@ async function getCategories() {
     })
   }
   
+  // *** MODAL **** //
+
+  let modal = null
+
+  function openModal(event) {
+    event.preventDefault()
+    
+    displayModalGallery()
+
+    const target = document.querySelector(event.target.getAttribute("href"))
+  
+    target.style.display = null
+    target.removeAttribute("aria-hidden")
+    target.setAttribute("aria-modal", "true")
+    modal = target
+
+    modal.addEventListener("click", closeModal)
+    modal.querySelector(".modal-content").addEventListener("click", stopPropagation)
+
+    const closeButton = modal.querySelector(".close-modal")
+        if (closeButton) {
+            closeButton.addEventListener("click", closeModal)
+        }
+
+    }
+
+  function closeModal(event) {
+    if (modal === null) return
+    event.preventDefault()
+
+    modal.style.display = "none"
+    modal.setAttribute("aria-hidden", "true")
+    modal.removeAttribute("aria-modal")
+
+    modal.removeEventListener("click", closeModal)
+    modal.querySelector(".modal-content").removeEventListener("click", stopPropagation)
+
+    modal = null
+  }
+
+  function stopPropagation(event) { // empêche que la modal se ferme lorsqu'on clique dessus
+    event.stopPropagation();
+  }
+
+  document.querySelector(".js-modal").addEventListener("click", openModal)
+
+
+// *** Display Modal Gallery *** 
+
+function displayModalGallery() {
+  getWorks().then(works => {
+
+  const modalGallery = document.querySelector(".modal-gallery")
+ 
+  modalGallery.innerHTML = ""
+
+    works.forEach(work => {
+      if (work) {
+        const modalFigure = document.createElement("figure")
+        modalGallery.appendChild(modalFigure)
+
+        const image = document.createElement("img")
+        image.src = work.imageUrl
+      
+        modalFigure.appendChild(image)
+  
+        const binButton = document.createElement("button")
+        binButton.classList.add("bin-button")
+
+        const binIcon = document.createElement("i")
+        binIcon.classList.add("fa-solid", "fa-trash-can")
+
+        binButton.appendChild(binIcon)
+        modalFigure.appendChild(binButton)
+
+        binButton.addEventListener("click", function() {
+        console.log("Delete button clicked for work: ", work.id)
+        modalFigure.remove() //*ajouter suppression des travaux 
+      })
+    }
+  })
+}).catch(error => {
+  console.error(error)
+})
+}
+
   // *** APPEL DES FONCTIONS AU CHARGEMENT DE LA PAGE ***
   
   // Fetch works et afficher les travaux
@@ -159,5 +252,3 @@ async function getCategories() {
   
   // Fetch categories et générer les filtres
   getCategories().then(categories => filterMenu(categories)).catch(error => console.error(error))
-
-  

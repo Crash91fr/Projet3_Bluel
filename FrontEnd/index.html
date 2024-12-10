@@ -48,13 +48,28 @@
 	<section id="portfolio">
 		<div class="edit-projet">
 			<h2>Mes Projets</h2>
-			<div class ="edit-icon not-displayed">
-			<a href="#"> <!--Ajouter lien vers la modal-->
+			<div class ="edit-icon not-displayed"> 
 				<i class="fa-regular fa-pen-to-square"></i>
-				<span>modifier</span>
-			</a>
+				<a href="#modal" class="js-modal">modifier</a>
 			</div>
 		</div>
+
+		<aside id="modal" class="modal" aria-hidden="true" role="dialog" style="display: none;">
+			<div class="modal-content">
+				<div class="modal-nav">
+					<button class="goback-modal hidden"><i class="fa-solid fa-arrow-left fa-lg"></i></button> <!-- visibility: hidden -->
+					<button class="close-modal"><i class="fa-solid fa-xmark fa-lg"></i></button> 
+				</div> 
+				<h3>Galerie Photo</h3> <!--Galerie Photo ou Ajout Photo-->
+				<div class="modal-gallery">
+				</div>
+				<div class="modal-line"></div>
+				<div class="modal-button">
+					<button>Ajouter une photo</button><!--Ajouter une Photo ou Valider--> 
+				</div> 
+			</div>
+		</aside>
+
 		<div class="filtres">
 		</div>
 		<div class="gallery"> 
