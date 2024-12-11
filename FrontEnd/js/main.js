@@ -12,7 +12,9 @@ function userLogged() {
    
 
     if (token) {
+
         console.log("Token is saved:", token)
+      
         logButton.textContent = "logout"
         
         blackBar.classList.remove("not-displayed")
@@ -30,9 +32,9 @@ function userLogged() {
     }
     logButton.addEventListener("click", () => {
       if (token) {
-      sessionStorage.removeItem("token")
-      window.location.replace("./index.html") // Recharge la page, avec le user logged out
-      } else {
+        sessionStorage.removeItem("token")
+        window.location.replace("./index.html") // Recharge la page, avec le user logged out
+        } else {
             window.location.replace("./login.html")  // Redirige vers la login page
         }
     })
@@ -136,6 +138,7 @@ async function getCategories() {
     works.forEach(work => {
       if (work) {
         const figure = document.createElement("figure")
+        figure.id = `work-${work.id}` /** attach the work.id to the figure to handle delete action in the modal */
         gallery.appendChild(figure)
   
         const image = document.createElement("img")
@@ -197,6 +200,7 @@ async function getCategories() {
     modal.querySelector(".modal-content").removeEventListener("click", stopPropagation)
 
     modal = null
+
   }
 
   function stopPropagation(event) { // empêche que la modal se ferme lorsqu'on clique dessus
@@ -210,10 +214,8 @@ async function getCategories() {
 
 function displayModalGallery() {
   getWorks().then(works => {
-
-  const modalGallery = document.querySelector(".modal-gallery")
- 
-  modalGallery.innerHTML = ""
+    const modalGallery = document.querySelector(".modal-gallery")
+    modalGallery.innerHTML = ""
 
     works.forEach(work => {
       if (work) {
@@ -221,10 +223,9 @@ function displayModalGallery() {
         modalGallery.appendChild(modalFigure)
 
         const image = document.createElement("img")
-        image.src = work.imageUrl
-      
+        image.src = work.imageUrl;
         modalFigure.appendChild(image)
-  
+
         const binButton = document.createElement("button")
         binButton.classList.add("bin-button")
 
@@ -234,15 +235,53 @@ function displayModalGallery() {
         binButton.appendChild(binIcon)
         modalFigure.appendChild(binButton)
 
+        //** Delete works with the binButton
+
         binButton.addEventListener("click", function() {
-        console.log("Delete button clicked for work: ", work.id)
-        modalFigure.remove() //*ajouter suppression des travaux 
-      })
-    }
+
+          const confirmPopup = confirm("Êtes-vous sûre de vouloir supprimer ce projet?");
+          
+          if (!confirmPopup) {
+            return; // annulation du click
+          }
+
+          let baseUrl = "http://localhost:5678/api/works"
+          let deleteWorkid = work.id
+          console.log(deleteWorkid)
+
+          let fullUrl = `${baseUrl}/${deleteWorkid}` //** ajoute l'id à l'url */
+          console.log(fullUrl)
+
+          // Perform the DELETE request
+          fetch(fullUrl, {
+            method: 'DELETE',
+            headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem("token")}` // Token from sessionStorage
+            }
+          })
+          .then(response => {
+            if (response.ok) {
+              console.log("Item deleted successfully");
+              modalFigure.remove(); // Remove the figure from the modal
+
+              const mainPageWorks = document.getElementById(`work-${deleteWorkid}`)
+              if (mainPageWorks) {
+                mainPageWorks.remove() // Remove the figure from main page 
+              }
+              showSuccessMessage("Projet supprimé avec succès!") // confirme la suppression avec une notification
+
+            } else {
+              console.error("Error deleting item", response.status)
+            }
+          })
+          .catch(error => console.error("Fetch error:", error))
+        })
+      }
+    })
+  }).catch(error => {
+    console.error(error)
   })
-}).catch(error => {
-  console.error(error)
-})
 }
 
   // *** APPEL DES FONCTIONS AU CHARGEMENT DE LA PAGE ***
@@ -252,3 +291,18 @@ function displayModalGallery() {
   
   // Fetch categories et générer les filtres
   getCategories().then(categories => filterMenu(categories)).catch(error => console.error(error))
+
+  // ** MESSAGE D'ALERTE ***
+
+  function showSuccessMessage(message) {
+  
+  const notification = document.createElement("div");
+  notification.classList.add("notification");
+  notification.textContent = message;
+
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    notification.remove();
+  }, 2000); //*(2secs)
+}

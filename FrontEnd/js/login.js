@@ -31,7 +31,6 @@ loginForm.addEventListener("submit", (event) => {
         console.log(errors)
         return
     }
-
     // si pas d'erreur, envoi de la requête au serveur ->
 
     fetch("http://localhost:5678/api/users/login", {
