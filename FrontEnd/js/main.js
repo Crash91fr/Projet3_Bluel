@@ -178,15 +178,18 @@ async function getCategories() {
     target.setAttribute("aria-modal", "true")
     modal = target
 
+    const modal1 = document.querySelector(".modal-content");
+    modal1.style.display = "flex"
+  
     modal.addEventListener("click", closeModal)
-    modal.querySelector(".modal-content").addEventListener("click", stopPropagation)
-
-    const closeButton = modal.querySelector(".close-modal")
-        if (closeButton) {
-            closeButton.addEventListener("click", closeModal)
-        }
-
-    }
+  
+    modal1.addEventListener("click", stopPropagation) 
+    
+    const closeButtons = modal.querySelectorAll(".close-modal")
+        closeButtons.forEach((button) => {
+            button.addEventListener("click", closeModal)
+        })
+  }
 
   function closeModal(event) {
     if (modal === null) return
@@ -197,7 +200,16 @@ async function getCategories() {
     modal.removeAttribute("aria-modal")
 
     modal.removeEventListener("click", closeModal)
-    modal.querySelector(".modal-content").removeEventListener("click", stopPropagation)
+
+    const modal1 = document.querySelector(".modal-content")
+    modal1.removeEventListener("click", stopPropagation)
+    modal1.style.display = "none" // For modal 1
+
+    const modal2 = document.querySelector(".modal-ajout")
+    if (modal2) {
+      modal2.removeEventListener("click", stopPropagation)
+      modal2.style.display = "none" // For modal 2
+    }
 
     modal = null
 
@@ -237,9 +249,9 @@ function displayModalGallery() {
 
         //** Delete works with the binButton
 
-        binButton.addEventListener("click", function() {
+        binButton.addEventListener("click", () => {
 
-          const confirmPopup = confirm("Êtes-vous sûre de vouloir supprimer ce projet?");
+          const confirmPopup = confirm("Supprimer définitivement ce projet?");
           
           if (!confirmPopup) {
             return; // annulation du click
@@ -278,11 +290,224 @@ function displayModalGallery() {
           .catch(error => console.error("Fetch error:", error))
         })
       }
+
     })
   }).catch(error => {
     console.error(error)
   })
 }
+
+   //** Changement de fenêtre modal */
+
+  // modal 1 vers 2 //
+
+  const switchModal = document.getElementById("btn-modal-ajouter")
+    switchModal.addEventListener("click", () => {
+      const modal1 = document.querySelector(".modal-content")
+      const modal2 = document.querySelector(".modal-ajout")
+
+      modal1.style.display= "none"
+      modal2.style.display= "flex"  
+      
+      modal2.addEventListener("click", stopPropagation)
+
+      addPhotoForm()
+
+  })
+
+  // modal 2 vers 1 //
+
+  const switchBackModal = document.querySelector(".goback-modal")    
+      switchBackModal.addEventListener("click", () => {
+        const modal1 = document.querySelector(".modal-content");
+        const modal2 = document.querySelector(".modal-ajout");
+        
+        modal1.style.display= "flex"
+        modal2.style.display= "none"
+
+  })
+
+    // ** AJOUT D'UNE NOUVELLE PHOTO ** //
+
+    // Construction du formulaire et contrôle //
+
+  function addPhotoForm() {
+    const modalPhotoForm = document.querySelector(".modal-add-photo")
+    modalPhotoForm.innerHTML = ""  // Clear any existing content
+  
+    const form = document.createElement("form")
+    form.setAttribute("enctype", "multipart/form-data")
+    form.setAttribute("method", "post")
+    form.classList.add("modal-form")
+
+    // Image input section
+    const imageContainer = document.createElement("div")
+    imageContainer.classList.add("img-background")
+    
+    const imageLabel = document.createElement("label")
+    imageLabel.classList.add("image-max-label")
+    imageLabel.innerHTML = "jpg, png : 4mo max"  
+
+    const previewImage = document.createElement("img")
+    previewImage.src = "./assets/icons/imgIcon.png"
+    previewImage.alt = "preview"
+    previewImage.classList.add("img-preview")
+
+    const imageButton = document.createElement("button")
+    imageButton.textContent = "+ Ajouter photo"
+    imageButton.classList.add("btn-image")
+
+    const imageInput = document.createElement("input") //** BROWSE... element */
+    imageInput.setAttribute("type", "file")
+    imageInput.setAttribute("name", "image")
+    imageInput.setAttribute("accept", "image/*")
+    imageInput.required = true
+    imageInput.classList.add("image-upload-input") 
+
+    // charge la preview et contrôle le fichier 
+
+    imageInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file || file.size > 4 * 1024 * 1024) {  // 4MB limit
+        alert("La taille de l'image excède la limite autorisé (4MB max).")
+        event.preventDefault()
+      }
+      if (file) {
+        previewImage.src = URL.createObjectURL(file)
+        imageButton.style.display = "none"  
+        imageLabel.style.display = "none"  
+      }
+      checkForm();  
+    })
+
+    // Title input section
+    const titleLabel = document.createElement("label")
+    titleLabel.innerText = "Titre" // Add label text for the title
+    const titleInput = document.createElement("input")
+    titleInput.setAttribute("type", "text")
+    titleInput.setAttribute("name", "Titre")
+    titleInput.setAttribute("placeholder", "")
+    titleInput.setAttribute("minlength", "4")  
+    titleInput.required = true
+    titleInput.classList.add("form-input") // Add styles for the input in CSS
+
+    // CONTROLE DU TITRE
+
+    titleInput.addEventListener("input", checkForm)
+  
+    // Category input section 
+    const categoryLabel = document.createElement("label");
+    categoryLabel.innerText = "Catégorie"  
+    const categorySelect = document.createElement("select")
+    categorySelect.setAttribute("name", "Catégorie")
+    categorySelect.required = true
+    categorySelect.classList.add("form-select")
+
+    const defaultOption = document.createElement("option") // show blank by default
+    defaultOption.value = "" 
+    defaultOption.innerText = "" 
+    defaultOption.setAttribute("disabled", true) 
+    defaultOption.setAttribute("selected", true) 
+    categorySelect.appendChild(defaultOption)
+  
+    // Fetch categories and append options to the category select
+    getCategories().then(categories => {
+      categories.forEach(category => {
+        const option = document.createElement("option")
+        option.value = category.id
+        option.innerText = category.name
+        categorySelect.appendChild(option)
+      })
+    }).catch(error => {
+      console.error("Error fetching categories:", error)
+    })
+    // CONTROLE DES CATEGORIES 
+
+      categorySelect.addEventListener("change", checkForm)
+
+      //  append all form elements to the modal
+      
+      imageButton.appendChild(imageInput)
+      imageContainer.appendChild(previewImage)
+      imageContainer.appendChild(imageLabel)
+      imageContainer.appendChild(imageButton)
+      form.appendChild(imageContainer)
+      form.appendChild(document.createElement("br"))  // Line break
+  
+      form.appendChild(titleLabel)
+      form.appendChild(titleInput)
+      form.appendChild(document.createElement("br"))
+  
+      form.appendChild(categoryLabel)
+      form.appendChild(categorySelect)
+      form.appendChild(document.createElement("br"))
+  
+    // Append the form to the modal photo container
+      modalPhotoForm.appendChild(form)
+
+    // Contrôler le remplissage du formulaire et changer la couleur du bouton valider   
+      
+    function checkForm() {
+      const submitButton = document.getElementById("btn-modal-valider")
+      const file = imageInput.files[0]
+      const titleValue = titleInput.value.trim()
+      const categoryValue = categorySelect.value
+
+      if (file && titleValue.length >= 4 && categoryValue) {
+      submitButton.disabled = false  
+      console.log("bouton valider disponible")
+      } else {
+      submitButton.disabled = true    
+      }
+  }
+}
+ 
+// ** SUBMIT THE FORM //
+    const submitButton = document.getElementById("btn-modal-valider")
+
+    submitButton.addEventListener("click", async (event) => {    
+    event.preventDefault()
+    console.log("Bouton valider cliqué")
+    
+    const formData = new FormData()    
+  
+    const form = document.querySelector(".modal-form")
+    const imageInput = form.querySelector(".image-upload-input")
+    const titleInput = form.querySelector(".form-input")
+    const formOptions = form.querySelector(".form-select")
+    
+    formData.append('image', imageInput.files[0]) //Ajoute le premier fichier sélectionné dans l'élément imageInput à l'objet FormData avec la clé 'image'.
+    formData.append('title', titleInput.value) //Ajoute la valeur de l'élément titleInput à l'objet FormData avec la clé 'title'.
+    formData.append('category', formOptions.value) //joute la valeur de l'élément formOptions à l'objet FormData avec la clé 'category'.
+     
+    console.log("Title:", formData.get("title"))
+    console.log("Category:", formData.get("category"))
+    console.log("Image file:", formData.get("image"))
+
+      try {
+        const response = await fetch("http://localhost:5678/api/works", {
+          method: "POST",  
+          headers: {
+            accept : "application/json",
+            "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+          }, 
+          body: formData, 
+        })
+        if (response.ok) {
+          console.log(response)
+          showSuccessMessage("Projet ajouté à la galerie!")
+          resetForm()
+          displayAllWorks()
+          submitButton.disabled = true
+        } else {
+          console.error("Erreur lors de l'envoi au serveur")
+        }
+      } catch (error) {
+        console.error("Erreur:", error)
+      }
+    })
+
+  // RESET LE FORMULAIRE
 
   // *** APPEL DES FONCTIONS AU CHARGEMENT DE LA PAGE ***
   
@@ -292,7 +517,8 @@ function displayModalGallery() {
   // Fetch categories et générer les filtres
   getCategories().then(categories => filterMenu(categories)).catch(error => console.error(error))
 
-  // ** MESSAGE D'ALERTE ***
+
+  // ** NOTIFICATION ***
 
   function showSuccessMessage(message) {
   
@@ -304,5 +530,20 @@ function displayModalGallery() {
 
   setTimeout(() => {
     notification.remove();
-  }, 2000); //*(2secs)
+  }, 4000); //*(2secs)
+}
+
+function resetForm(){
+  const modalForm = document.querySelector(".modal-form")
+  modalForm.reset()
+  
+  const imageInput = modalForm.querySelector(".image-upload-input")
+  const previewImage = modalForm.querySelector(".img-preview")
+
+  imageInput.value = ""
+  previewImage.src = "./assets/icons/imgIcon.png"
+
+  const imageButton = document.querySelector(".btn-image").style.display = "block"  
+  const imageLabel = document.querySelector(".image-max-label").style.display = "block"  
+
 }

@@ -55,25 +55,23 @@
 		</div>
 
 		<aside id="modal" class="modal" aria-hidden="true" style="display: none;">
-			<div class="modal-content">	
+			<div class="modal-content" style="display: none;">	
 				<button class="close-modal"><i class="fa-solid fa-xmark fa-lg"></i></button>
 				<h3>Galerie Photo</h3> 
 				<div class="modal-gallery"></div>
 				<div class="modal-line"></div>
 				<div class="modal-button">
-					<button>Ajouter une photo</button>
+					<button id="btn-modal-ajouter">Ajouter une photo</button>
 				</div> 
 			</div>
 			<div class="modal-ajout" style="display: none;">
-				<div class="modal-nav">
-				<button class="goback-modal"><i class="fa-solid fa-arrow-left fa-lg"></i></button>
-				<button class="close-modal"><i class="fa-solid fa-xmark fa-lg"></i></button>
-				</div>
+				<span><button class="goback-modal"><i class="fa-solid fa-arrow-left fa-lg"></i></button>
+				<button class="close-modal"><i class="fa-solid fa-xmark fa-lg"></i></button></span>
 				<h3>Ajout Photo</h3>
 				<div class="modal-add-photo"></div>
 				<div class="modal-line"></div>
 				<div class="modal-button">
-					<button id="modal-valider">Valider</button>
+					<button id="btn-modal-valider" disabled>Valider</button>
 				</div> 
 			</div>
 	</aside>
