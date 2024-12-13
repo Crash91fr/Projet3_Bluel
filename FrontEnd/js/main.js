@@ -325,6 +325,8 @@ function displayModalGallery() {
         modal1.style.display= "flex"
         modal2.style.display= "none"
 
+        displayModalGallery()
+
   })
 
     // ** AJOUT D'UNE NOUVELLE PHOTO ** //
@@ -342,21 +344,24 @@ function displayModalGallery() {
 
     // Image input section
     const imageContainer = document.createElement("div")
-    imageContainer.classList.add("img-background")
+    imageContainer.classList.add("img-container")
     
-    const imageLabel = document.createElement("label")
-    imageLabel.classList.add("image-max-label")
-    imageLabel.innerHTML = "jpg, png : 4mo max"  
-
+    const imageIcon = document.createElement("i")
+    imageIcon.classList.add("fa-regular", "fa-image", "fa-2xl", "img-icon")
+    
     const previewImage = document.createElement("img")
-    previewImage.src = "./assets/icons/imgIcon.png"
-    previewImage.alt = "preview"
+    previewImage.src = ""
+    previewImage.alt = ""
     previewImage.classList.add("img-preview")
 
     const imageButton = document.createElement("button")
     imageButton.textContent = "+ Ajouter photo"
     imageButton.classList.add("btn-image")
-
+    
+    const imageText = document.createElement("p")
+    imageText.innerText = "jpg, png: 4mo max"
+    imageText.classList.add("img-text")
+    
     const imageInput = document.createElement("input") //** BROWSE... element */
     imageInput.setAttribute("type", "file")
     imageInput.setAttribute("name", "image")
@@ -375,7 +380,8 @@ function displayModalGallery() {
       if (file) {
         previewImage.src = URL.createObjectURL(file)
         imageButton.style.display = "none"  
-        imageLabel.style.display = "none"  
+        imageText.style.display = "none"  
+        imageIcon.style.display = "none"
       }
       checkForm();  
     })
@@ -428,9 +434,10 @@ function displayModalGallery() {
       //  append all form elements to the modal
       
       imageButton.appendChild(imageInput)
+      imageContainer.appendChild(imageIcon)
       imageContainer.appendChild(previewImage)
-      imageContainer.appendChild(imageLabel)
       imageContainer.appendChild(imageButton)
+      imageContainer.appendChild(imageText)
       form.appendChild(imageContainer)
       form.appendChild(document.createElement("br"))  // Line break
   
@@ -541,9 +548,10 @@ function resetForm(){
   const previewImage = modalForm.querySelector(".img-preview")
 
   imageInput.value = ""
-  previewImage.src = "./assets/icons/imgIcon.png"
+  previewImage.src = "" 
 
-  const imageButton = document.querySelector(".btn-image").style.display = "block"  
-  const imageLabel = document.querySelector(".image-max-label").style.display = "block"  
+  const imageButton = document.querySelector(".btn-image").style.display = "block" 
+  const imageText = document.querySelector(".img-text").style.display = "block"
+  const imageIcon = document.querySelector(".img-icon").style.display = "block"
 
 }

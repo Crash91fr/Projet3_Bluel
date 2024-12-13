@@ -435,49 +435,56 @@ footer nav li {
 	margin-top: 40px;
 }
 
-.image-max-label {
+.img-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color:#E8F1F6;
+	width: 100%;
+	height: 170px;
+	position: relative; 
+}
+
+.img-icon {
+	color: #cbd6dc;
 	position: relative;
-  	left: 180px;
-  	bottom: 30px;
-  	font-size: 10px;
-  	color: #444444;
+	top: 60px;
+	font-size: 5em;
+}
+
+.img-preview {
+	height: 100%;
+	object-fit: contain;
 }
 
 .btn-image {
 	width: 170px;
-	height: 36px;
+	height: 50px;
 	background-color: #cbd6dc;
 	color: #306685;
 	border-radius: 50px;
 	border: none;
 	z-index: 0;
-	position: relative;
+	position: relative;  /* parent of img-upload-input*/
 	overflow: hidden;
-	left: 145px;
-	bottom: 85px;
+	margin-bottom: 5px;
 	font-family: Work Sans;
 }
 
+.img-text {
+	color: #444444;
+	font-size: 10px;
+	padding-bottom: 20px;
+}
+
 .image-upload-input { /*Browse...*/
-	position: absolute;
+	position: absolute; /* child of img-upload-input*/
 	opacity: 0;
 	width: 100%;
 	height: 100%;
 	top: 0;
 	left: 0;
 	z-index: 1;
-}
-
-.img-background {
-	background-color:#E8F1F6;
-	width: 450px;
-	height: 170px;
-}
-
-.img-preview {
-	width: 450px;
-	height: 170px;
-	object-fit: scale-down;
 }
 
 .form-input {
