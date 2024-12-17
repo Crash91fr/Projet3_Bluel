@@ -40,9 +40,9 @@ function userLogged() {
     })
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     userLogged();  
-})
+}) 
 
 // ****** GET / requests *************
 
@@ -81,7 +81,7 @@ async function getCategories() {
     
     filterMenu.innerHTML = ""
   
-      const tous = document.createElement("button")
+      const tous = document.createElement("button") //*création du bouton Tous pour affichage par défaut de tous les travaux 
       tous.textContent = "Tous"
       tous.classList.add("btn-tous", "active") 
       tous.addEventListener("click", function() {
@@ -94,11 +94,11 @@ async function getCategories() {
     categories.forEach(category => {
       if (category) {
         const button = document.createElement("button")
-        button.dataset.categoryId = category.id // attache la donnée categoryId à l'élément
+        button.dataset.categoryId = category.id //*attache la donnée categoryId au bouton
         button.textContent = category.name
   
         button.addEventListener("click", () => {
-          filtersCategory(category.id)
+          filtersCategory(category.id) //*fait appel à la fonction de filtrage
           handleActiveButton(button)
         })
   
@@ -107,31 +107,32 @@ async function getCategories() {
     })
   }
   
-  // gestion de l'apparence du bouton actif
+  // gestion de l'apparence du bouton actif par ajout et suppression de class
 
   function handleActiveButton(button) {
-    const allButtons = document.querySelectorAll(".filtres button");
-    allButtons.forEach(btn => btn.classList.remove("active"));
+    const allButtons = document.querySelectorAll(".filtres button")
+    allButtons.forEach(btn => btn.classList.remove("active"))
    
-    button.classList.add("active");
+    button.classList.add("active")
   }
   
   
   // *** FILTER WORKS BY CATEGORY ***
   
-  function filtersCategory(categoryId) {
-    getWorks().then(works => {
-      const filteredWorks = works.filter(work => work.categoryId === categoryId);
-      displayWorks(filteredWorks)
-    }).catch(error => {
-      console.error(error)
-    });
+  async function filtersCategory(categoryId) {
+    try {
+      const works = await getWorks()
+      const filteredWorks = works.filter(work => work.categoryId === categoryId) // filtre avec .filter() pour ne garder que les travaux ayant la même categoryID que le bouton
+      displayWorks(filteredWorks)  
+    } catch (error) {
+      console.error(error)  
+    }
   }
   
   // *** DISPLAY WORKS ***
   
   function displayWorks(works) {
-    const gallery = document.querySelector(".gallery");
+    const gallery = document.querySelector(".gallery")
   
     gallery.innerHTML = ""
   
@@ -178,7 +179,7 @@ async function getCategories() {
     target.setAttribute("aria-modal", "true")
     modal = target
 
-    const modal1 = document.querySelector(".modal-content");
+    const modal1 = document.querySelector(".modal-content")
     modal1.style.display = "flex"
   
     modal.addEventListener("click", closeModal)
@@ -205,7 +206,7 @@ async function getCategories() {
     modal1.removeEventListener("click", stopPropagation)
     modal1.style.display = "none" // For modal 1
 
-    const modal2 = document.querySelector(".modal-ajout")
+    const modal2 = document.querySelector(".modal-ajout") 
     if (modal2) {
       modal2.removeEventListener("click", stopPropagation)
       modal2.style.display = "none" // For modal 2
@@ -216,13 +217,15 @@ async function getCategories() {
   }
 
   function stopPropagation(event) { // empêche que la modal se ferme lorsqu'on clique dessus
-    event.stopPropagation();
+    event.stopPropagation()
   }
 
   document.querySelector(".js-modal").addEventListener("click", openModal)
 
 
-// *** Display Modal Gallery *** 
+// *** MINI GALERIE ET SUPPRESSION D'UN PROJET ***
+
+// ** AFFICHAGE DE LA MINI GALLERIE **
 
 function displayModalGallery() {
   getWorks().then(works => {
@@ -247,14 +250,14 @@ function displayModalGallery() {
         binButton.appendChild(binIcon)
         modalFigure.appendChild(binButton)
 
-        //** Delete works with the binButton
+        //** SUPPRIMER UN PROJET AVEC LE BOUTON BIN
 
         binButton.addEventListener("click", () => {
 
-          const confirmPopup = confirm("Supprimer définitivement ce projet?");
+          const confirmPopup = confirm("Supprimer définitivement ce projet?")
           
           if (!confirmPopup) {
-            return; // annulation du click
+            return // annulation du click
           }
 
           let baseUrl = "http://localhost:5678/api/works"
@@ -264,7 +267,7 @@ function displayModalGallery() {
           let fullUrl = `${baseUrl}/${deleteWorkid}` //** ajoute l'id à l'url */
           console.log(fullUrl)
 
-          // Perform the DELETE request
+          // ENVOI DE LA DELETE REQUEST
           fetch(fullUrl, {
             method: 'DELETE',
             headers: {
@@ -275,11 +278,11 @@ function displayModalGallery() {
           .then(response => {
             if (response.ok) {
               console.log("Item deleted successfully");
-              modalFigure.remove(); // Remove the figure from the modal
+              modalFigure.remove(); // supprime de la mini-galerie
 
               const mainPageWorks = document.getElementById(`work-${deleteWorkid}`)
               if (mainPageWorks) {
-                mainPageWorks.remove() // Remove the figure from main page 
+                mainPageWorks.remove() // supprime de la page d'accueil 
               }
               showSuccessMessage("Projet supprimé avec succès!") // confirme la suppression avec une notification
 
@@ -299,7 +302,7 @@ function displayModalGallery() {
 
    //** Changement de fenêtre modal */
 
-  // modal 1 vers 2 //
+  // Modal 1 vers 2 //
 
   const switchModal = document.getElementById("btn-modal-ajouter")
     switchModal.addEventListener("click", () => {
@@ -315,12 +318,12 @@ function displayModalGallery() {
 
   })
 
-  // modal 2 vers 1 //
+  // Modal 2 vers 1 //
 
   const switchBackModal = document.querySelector(".goback-modal")    
       switchBackModal.addEventListener("click", () => {
-        const modal1 = document.querySelector(".modal-content");
-        const modal2 = document.querySelector(".modal-ajout");
+        const modal1 = document.querySelector(".modal-content")
+        const modal2 = document.querySelector(".modal-ajout")
         
         modal1.style.display= "flex"
         modal2.style.display= "none"
@@ -335,7 +338,7 @@ function displayModalGallery() {
 
   function addPhotoForm() {
     const modalPhotoForm = document.querySelector(".modal-add-photo")
-    modalPhotoForm.innerHTML = ""  // Clear any existing content
+    modalPhotoForm.innerHTML = ""  // nettoyage 
   
     const form = document.createElement("form")
     form.setAttribute("enctype", "multipart/form-data")
@@ -362,20 +365,21 @@ function displayModalGallery() {
     imageText.innerText = "jpg, png: 4mo max"
     imageText.classList.add("img-text")
     
-    const imageInput = document.createElement("input") //** BROWSE... element */
+    const imageInput = document.createElement("input") //** BROWSE... element caché sous le bouton */ 
     imageInput.setAttribute("type", "file")
     imageInput.setAttribute("name", "image")
     imageInput.setAttribute("accept", "image/*")
     imageInput.required = true
     imageInput.classList.add("image-upload-input") 
 
-    // charge la preview et contrôle le fichier 
+    // charge la preview de l'image et contrôle le fichier 
 
     imageInput.addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (!file || file.size > 4 * 1024 * 1024) {  // 4MB limit
         alert("La taille de l'image excède la limite autorisé (4MB max).")
         event.preventDefault()
+        return
       }
       if (file) {
         previewImage.src = URL.createObjectURL(file)
@@ -401,7 +405,7 @@ function displayModalGallery() {
 
     titleInput.addEventListener("input", checkForm)
   
-    // Category input section 
+    // Categories input section 
     const categoryLabel = document.createElement("label");
     categoryLabel.innerText = "Catégorie"  
     const categorySelect = document.createElement("select")
@@ -409,14 +413,14 @@ function displayModalGallery() {
     categorySelect.required = true
     categorySelect.classList.add("form-select")
 
-    const defaultOption = document.createElement("option") // show blank by default
+    const defaultOption = document.createElement("option") // menu vide par défaut
     defaultOption.value = "" 
     defaultOption.innerText = "" 
     defaultOption.setAttribute("disabled", true) 
     defaultOption.setAttribute("selected", true) 
     categorySelect.appendChild(defaultOption)
   
-    // Fetch categories and append options to the category select
+    // récupère les catégories et ajoute les options du menu déroulant
     getCategories().then(categories => {
       categories.forEach(category => {
         const option = document.createElement("option")
@@ -431,7 +435,7 @@ function displayModalGallery() {
 
       categorySelect.addEventListener("change", checkForm)
 
-      //  append all form elements to the modal
+      //  ajout des éléments au formulaire
       
       imageButton.appendChild(imageInput)
       imageContainer.appendChild(imageIcon)
@@ -449,10 +453,10 @@ function displayModalGallery() {
       form.appendChild(categorySelect)
       form.appendChild(document.createElement("br"))
   
-    // Append the form to the modal photo container
+    // ajout du formulaire à la modal
       modalPhotoForm.appendChild(form)
 
-    // Contrôler le remplissage du formulaire et changer la couleur du bouton valider   
+    // Contrôler le remplissage du formulaire et activer le bouton valider   
       
     function checkForm() {
       const submitButton = document.getElementById("btn-modal-valider")
@@ -469,7 +473,7 @@ function displayModalGallery() {
   }
 }
  
-// ** SUBMIT THE FORM //
+// ** SUBMIT THE FORM // 
     const submitButton = document.getElementById("btn-modal-valider")
 
     submitButton.addEventListener("click", async (event) => {    
@@ -502,7 +506,7 @@ function displayModalGallery() {
         })
         if (response.ok) {
           console.log(response)
-          showSuccessMessage("Projet ajouté à la galerie!")
+          showSuccessMessage("Projet ajouté à la galerie!") //** confirme l'ajout avec une notification */
           resetForm()
           displayAllWorks()
           submitButton.disabled = true
@@ -515,30 +519,6 @@ function displayModalGallery() {
     })
 
   // RESET LE FORMULAIRE
-
-  // *** APPEL DES FONCTIONS AU CHARGEMENT DE LA PAGE ***
-  
-  // Fetch works et afficher les travaux
-  getWorks().then(works => displayWorks(works)).catch(error => console.error(error))
-  
-  // Fetch categories et générer les filtres
-  getCategories().then(categories => filterMenu(categories)).catch(error => console.error(error))
-
-
-  // ** NOTIFICATION ***
-
-  function showSuccessMessage(message) {
-  
-  const notification = document.createElement("div");
-  notification.classList.add("notification");
-  notification.textContent = message;
-
-  document.body.appendChild(notification);
-
-  setTimeout(() => {
-    notification.remove();
-  }, 4000); //*(2secs)
-}
 
 function resetForm(){
   const modalForm = document.querySelector(".modal-form")
@@ -555,3 +535,28 @@ function resetForm(){
   const imageIcon = document.querySelector(".img-icon").style.display = "block"
 
 }
+
+  // *** APPEL DES FONCTIONS AU CHARGEMENT DE LA PAGE ***
+  
+  // Fetch works et afficher les travaux
+  getWorks().then(works => displayWorks(works)).catch(error => console.error(error))
+  
+  // Fetch categories et générer les filtres
+  getCategories().then(categories => filterMenu(categories)).catch(error => console.error(error))
+
+
+  // ** NOTIFICATION ***
+
+  function showSuccessMessage(message) {
+  
+  const notification = document.createElement("div")
+  notification.classList.add("notification")
+  notification.textContent = message
+
+  document.body.appendChild(notification)
+
+  setTimeout(() => {
+    notification.remove()
+  }, 4000) //*(4 secs)
+}
+

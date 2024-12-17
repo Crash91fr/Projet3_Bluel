@@ -87,7 +87,7 @@ const allInputs = [document.getElementById("email"), document.getElementById("pa
     allInputs.forEach((input) => {
         input.addEventListener("focus", () => {
             if (input.classList.contains("incorrect")) {
-                input.placeholder = input.id === "email" ? "" : ""
+                input.placeholder = input.id === "email" ? "" : "" //* placeholders vide
                 input.classList.remove("incorrect")
             }
         })
@@ -96,4 +96,4 @@ const allInputs = [document.getElementById("email"), document.getElementById("pa
             input.classList.remove("incorrect")
             input.placeholder = input.id === "email" ? "" : ""
         })
-    });
+    })
